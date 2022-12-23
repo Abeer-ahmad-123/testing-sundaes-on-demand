@@ -1,14 +1,29 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, OverlayTrigger, Popover } from 'react-bootstrap';
 
-const SummaryForm = () => {
+const SummaryForm = ({ setOrderPhase }) => {
   const [tcChecked, setTcChecked] = useState(false);
+
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Body>No ice cream will actually be delivered</Popover.Body>
+    </Popover>
+  );
 
   const checboxLabel = (
     <span>
-      I agree to <span style={{ color: 'blue' }}>Terms and Conditions</span>
+      I agree to &nbsp;
+      <OverlayTrigger placement="right" overlay={popover}>
+        <span style={{ color: 'blue' }}>Terms and Conditions</span>
+      </OverlayTrigger>
     </span>
   );
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    setOrderPhase('Completed');
+  };
   return (
     <Form>
       <Form.Group controlId="terms-and-conditions">
@@ -19,7 +34,7 @@ const SummaryForm = () => {
           label={checboxLabel}
         />
       </Form.Group>
-      <Button variant="primary" type="submit" disabled={!tcChecked}>
+      <Button type="submit" disabled={!tcChecked} className="summaryButton">
         Confirm Order
       </Button>
     </Form>
