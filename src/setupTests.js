@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 
 // src/setupTests.js
 import { server } from './mocks/server.js';
-global.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Establish API mocking before all tests.
 beforeAll(() => server.listen());
