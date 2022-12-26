@@ -1,11 +1,14 @@
-import './App.css';
+import { Container } from 'react-bootstrap';
 import OrderEntry from './pages/entry/OrderEntry';
+import { OrderDetailsProvider } from './contexts/OrderDetails';
 
 function App() {
   return (
-    <div>
-      <OrderEntry />
-    </div>
+    <Container>
+      <OrderDetailsProvider>
+        <OrderEntry />
+      </OrderDetailsProvider>
+    </Container>
   );
 }
 
