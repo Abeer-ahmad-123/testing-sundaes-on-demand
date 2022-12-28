@@ -5,10 +5,13 @@ import { Row } from 'react-bootstrap';
 import ToppingsOption from './ToppingsOption';
 import AlertBanner from '../common/AlertBanner';
 import { pricePerItem } from '../../constants';
+import { formatCurrency } from '../../utilities';
+import { useOrderDetails } from '../../contexts/OrderDetails';
 
 const Options = ({ optionsType }) => {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(false);
+  const { totals } = useOrderDetails();
 
   //optionType is scoop and toppings
   useEffect(() => {
@@ -43,7 +46,10 @@ const Options = ({ optionsType }) => {
   return (
     <>
       <h2>{title}</h2>
-      <p>${pricePerItem[optionsType]} each</p>
+      <p>{formatCurrency(pricePerItem[optionsType])} each</p>
+      <p>
+        {title} total: {formatCurrency(totals[optionsType])}
+      </p>
       <Row>{optionItems}</Row>
     </>
   );
