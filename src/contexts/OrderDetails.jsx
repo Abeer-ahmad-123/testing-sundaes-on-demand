@@ -1,59 +1,69 @@
-import { createContext, useContext, useState } from 'react';
-import { pricePerItem } from '../constants/index';
+import { createContext, useContext, useState } from "react";
+import { pricePerItem } from "../constants";
 
 const OrderDetails = createContext();
 
-//create a custom hook to check we are in provider
-export const useOrderDetails = () => {
-  const context = useContext(OrderDetails);
+// create custom hook to check whether we're in a provider
+export function useOrderDetails() {
+  const contextValue = useContext(OrderDetails);
 
-  if (!context) {
+  if (!contextValue) {
     throw new Error(
-      'useOrderDetails must be called from within an OrderDetailsProvider'
+      "useOrderDetails must be called from within an OrderDetailsProvider"
     );
   }
 
-  return context;
-};
+  return contextValue;
+}
 
-export const OrderDetailsProvider = (props) => {
-  const [optionsCounts, setOptionsCounts] = useState({
-    scoops: {}, //{chocolate:1,vanilla:2}
-    toppings: {}, //{Gummy Bears: 1}
+export function OrderDetailsProvider(props) {
+  const [optionCounts, setOptionCounts] = useState({
+    scoops: {}, // example: { Chocolate: 1, Vanilla: 2 }
+    toppings: {}, // example: { "Gummi Bears": 1 }
   });
 
-  const updateItemCount = (itemName, newItemCount, optionType) => {
-    // make a copy of exisiting state
-    const newOptionCounts = { ...optionsCounts };
+  function updateItemCount(itemName, newItemCount, optionType) {
+    // make a copy of existing state
+    const newOptionCounts = { ...optionCounts };
 
-    //update the copy with new information
+    // update the copy with the new information
     newOptionCounts[optionType][itemName] = newItemCount;
 
-    //update the state with the updated copy
-    setOptionsCounts(newOptionCounts);
-  };
+    // update the state with the updated copy
+    setOptionCounts(newOptionCounts);
 
-  const resetOrder = () => {
-    setOptionsCounts({ scoops: {}, toppings: {} });
-  };
+    // alternate way using function argument to setOptionCounts
+    // see https://www.udemy.com/course/react-testing-library/learn/#questions/18721990/
+    // setOptionCounts((previousOptionCounts) => ({
+    //   ...previousOptionCounts,
+    //   [optionType]: {
+    //     ...previousOptionCounts[optionType],
+    //     [itemName]: newItemCount,
+    //   },
+    // }));
+  }
 
-  //utility function to derice totals from optionsCOunts state value
-  const calculateTotal = (optionsType) => {
-    //get array of counts for the option type (eg 1,2)
-    const countsArray = Object.values(optionsCounts[optionsType]);
+  function resetOrder() {
+    setOptionCounts({ scoops: {}, toppings: {} });
+  }
 
-    //total the calues in the array of counts fot the number of items
+  // utility function to derive totals from optionCounts state value
+  function calculateTotal(optionType) {
+    // get an array of counts for the option type (for example, [1, 2])
+    const countsArray = Object.values(optionCounts[optionType]);
+
+    // total the values in the array of counts for the number of items
     const totalCount = countsArray.reduce((total, value) => total + value, 0);
 
-    //multiply the total number of items by the price for this type
-    return totalCount * pricePerItem[optionsType];
-  };
+    // multiply the total number of items by the price for this item type
+    return totalCount * pricePerItem[optionType];
+  }
 
   const totals = {
-    scoops: calculateTotal('scoops'),
-    toppings: calculateTotal('toppings'),
+    scoops: calculateTotal("scoops"),
+    toppings: calculateTotal("toppings"),
   };
 
-  const value = { optionsCounts, totals, updateItemCount, resetOrder };
+  const value = { optionCounts, totals, updateItemCount, resetOrder };
   return <OrderDetails.Provider value={value} {...props} />;
-};
+}
